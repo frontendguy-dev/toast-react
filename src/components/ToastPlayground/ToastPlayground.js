@@ -1,7 +1,6 @@
 import React from "react";
 
 import Button from "../Button";
-
 import styles from "./ToastPlayground.module.css";
 import Toast from "../Toast/Toast";
 
@@ -28,7 +27,10 @@ function ToastPlayground() {
       </header>
 
       {showToast && (
-        <Toast variant={variant} message={message} handleClose={toggleToast} />
+        <Toast 
+          variant={variant} 
+          message={message} 
+          handleClose={toggleToast} />
       )}
 
       <div className={styles.controlsWrapper}>
