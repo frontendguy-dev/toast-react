@@ -2,21 +2,36 @@ import React from "react";
 
 import Button from "../Button";
 import styles from "./ToastPlayground.module.css";
-import Toast from "../Toast/Toast";
+import ToastShelf from "../ToastShelf/ToastShelf";
 
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
 function ToastPlayground() {
-  const [variant, setVariant] = React.useState("");
-  const [message, setMessage] = React.useState("");
-  const [showToast, setShowToast] = React.useState(false);
-
-  const toggleToast = () => {
-    setShowToast((prevState) => !prevState);
-  };
+  const [variant, setVariant] = React.useState("notice");
+  const [message, setMessage] = React.useState('');
+  const [toasts, setToasts] = React.useState([]);
 
   const handleChange = (evt) => {
     setVariant(evt?.target?.value);
+  };
+
+  const handleToastSubmit = (evt) => {
+    evt.preventDefault();
+    const newToasts = [...toasts];
+    const toast = {
+      id: crypto.randomUUID(),
+      variant: variant,
+      message: message,
+    };
+    newToasts.push(toast);
+    setToasts(newToasts);
+    setMessage('');
+    setVariant(VARIANT_OPTIONS[0]);
+  };
+
+  const removeToast = (id) => {
+    const filteredToasts = toasts.filter(toast => toast.id !== id);
+    setToasts(filteredToasts);
   };
 
   return (
@@ -26,60 +41,61 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      {showToast && (
-        <Toast 
-          variant={variant} 
-          message={message} 
-          handleClose={toggleToast} />
-      )}
+      <ToastShelf toasts={toasts} handleClose={removeToast} />
 
       <div className={styles.controlsWrapper}>
-        <div className={styles.row}>
-          <label
-            htmlFor="message"
-            className={styles.label}
-            style={{ alignSelf: "baseline" }}
-          >
-            Message
-          </label>
-          <div className={styles.inputWrapper}>
-            <textarea
-              id="message"
-              className={styles.messageInput}
-              onChange={(evt) => setMessage(evt.target.value)}
-            />
+        <form onSubmit={handleToastSubmit}>
+          <div className={styles.row}>
+            <label
+              htmlFor="message"
+              className={styles.label}
+              style={{ alignSelf: "baseline" }}
+            >
+              Message
+            </label>
+            <div className={styles.inputWrapper}>
+              <textarea
+                id="message"
+                className={styles.messageInput}
+                value={message}
+                onChange={(evt) => setMessage(evt.target.value)}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className={styles.row}>
-          <div className={styles.label}>Variant</div>
-          <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-            {VARIANT_OPTIONS.map((el) => (
-              <div key={`variant-${el}`}>
-                <label htmlFor={`variant-${el}`}>
-                  <input
-                    id={`variant-${el}`}
-                    type="radio"
-                    name="variant"
-                    value={el}
-                    onChange={(evt) => handleChange(evt)}
-                  />
-                  {el}
-                </label>
-              </div>
-            ))}
+          <div className={styles.row}>
+            <div className={styles.label}>Variant</div>
+            <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
+              {VARIANT_OPTIONS.map((el) => (
+                <div key={`variant-${el}`}>
+                  <label htmlFor={`variant-${el}`}>
+                    <input
+                      id={`variant-${el}`}
+                      type="radio"
+                      name="variant"
+                      value={el}
+                      checked={el === variant}
+                      onChange={(evt) => handleChange(evt)}
+                    />
+                    {el}
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className={styles.row}>
-          <div className={styles.label} />
-          <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-            <Button onClick={toggleToast}>Pop Toast!</Button>
+          <div className={styles.row}>
+            <div className={styles.label} />
+            <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
+              <Button>Pop Toast!</Button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
 }
 
 export default ToastPlayground;
+
+//git commit --author="Name <email>" -m "whatever"
