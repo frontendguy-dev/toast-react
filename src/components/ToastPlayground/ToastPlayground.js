@@ -97,5 +97,3 @@ function ToastPlayground() {
 }
 
 export default ToastPlayground;
-
-//git commit --author="Name <email>" -m "whatever"
